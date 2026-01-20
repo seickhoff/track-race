@@ -2,7 +2,7 @@ import { WebSocketServer, WebSocket } from 'ws';
 import { GameState, CONFIG, Player } from './GameState.js';
 import { ClientMessage, ServerMessage } from './types.js';
 
-const PORT = 3001;
+const PORT = Number(process.env.PORT) || 3001;
 const wss = new WebSocketServer({ port: PORT });
 const game = new GameState();
 const clients = new Map<WebSocket, string>();

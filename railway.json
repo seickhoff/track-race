@@ -1,5 +1,9 @@
 {
   "build": {
-    "rootDirectory": "server"
+    "rootDirectory": "server",
+    "buildCommand": "npm install && npm run build"
+  },
+  "deploy": {
+    "startCommand": "npm run start"
   }
 }

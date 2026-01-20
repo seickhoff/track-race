@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { ClientMessage, ServerMessage, GameStateData, RankingEntry } from '../types';
 
-const WS_URL = 'ws://localhost:3001';
+const WS_URL = import.meta.env.VITE_WS_URL || 'ws://localhost:3001';
 
 interface UseWebSocketReturn {
   connected: boolean;

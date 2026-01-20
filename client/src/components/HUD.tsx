@@ -56,9 +56,7 @@ export function HUD({
           <span className="hud__time">{formatTime(gameState.raceTime)}</span>
         )}
 
-        {gameState.status === 'finished' && (
-          <span className="hud__title">Race Complete!</span>
-        )}
+        {gameState.status === 'finished' && <span className="hud__title">Race Complete!</span>}
       </div>
 
       <div className="hud__right">
@@ -70,7 +68,9 @@ export function HUD({
 
         {gameState.status === 'running' && (
           <span className={`hud__impede ${canImpede ? 'hud__impede--ready' : ''}`}>
-            {impedesRemaining > 0 ? `${impedesRemaining} impede${impedesRemaining !== 1 ? 's' : ''} left` : 'No impedes left'}
+            {impedesRemaining > 0
+              ? `${impedesRemaining} impede${impedesRemaining !== 1 ? 's' : ''} left`
+              : 'No impedes left'}
           </span>
         )}
 

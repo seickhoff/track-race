@@ -26,6 +26,7 @@ export function Lane({
     <div className={`lane ${isMe ? 'lane--me' : ''}`}>
       <div className="lane__number">{laneNumber}</div>
       <div className="lane__track">
+        <div className="lane__marker-75" />
         <div className="lane__finish-line" />
         <Runner
           player={player}

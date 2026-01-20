@@ -21,18 +21,8 @@ export function Runner({ player, isMe, canClick, onClick, isImpededNow, isRunnin
       onClick={canClick ? onClick : undefined}
       title={`${player.name}${isMe ? ' (You)' : ''}`}
     >
-      <div className="runner__figure">
-        <div className="runner__head"></div>
-        <div className="runner__body"></div>
-        <div className="runner__legs">
-          <div className="runner__leg runner__leg--front"></div>
-          <div className="runner__leg runner__leg--back"></div>
-        </div>
-        <div className="runner__arms">
-          <div className="runner__arm runner__arm--front"></div>
-          <div className="runner__arm runner__arm--back"></div>
-        </div>
-      </div>
+      {canClick && <div className="runner__hitarea" />}
+      <div className="runner__sprite" />
       <div className="runner__label">
         <span className="runner__name">{player.name}</span>
         {player.finishRank && <span className="runner__rank">#{player.finishRank}</span>}

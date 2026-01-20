@@ -58,9 +58,7 @@ export function Results({ rankings, myLane }: ResultsProps) {
             <div className="results__stats">
               <span className="results__time">{formatTime(entry.time)}</span>
               {entry.timesImpeded > 0 && (
-                <span className="results__impeded">
-                  {entry.timesImpeded}x slowed
-                </span>
+                <span className="results__impeded">{entry.timesImpeded}x slowed</span>
               )}
             </div>
           </div>

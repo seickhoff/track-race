@@ -139,6 +139,7 @@ body {
   flex: 1;
   display: flex;
   flex-direction: column;
+  background: linear-gradient(180deg, #2d5a27 0%, #1e4d1a 100%);
 }
 
 /* HUD - Fixed height header */
@@ -220,26 +221,35 @@ body {
 
 /* Track */
 .track {
-  flex: 1;
   display: flex;
   flex-direction: column;
-  padding: 1rem 1rem 1rem 0;
+  padding: 0.5rem 1rem 0.5rem 0;
   gap: 0;
   overflow-x: hidden;
-  background: linear-gradient(180deg, #2d5a27 0%, #1e4d1a 100%);
+  background: #c2593a;
   position: relative;
 }
 
 .track::before {
   content: '';
   position: absolute;
-  top: 0.5rem;
-  bottom: 0.5rem;
+  top: 0;
   left: 0;
-  right: 0.5rem;
-  background: #c2593a;
-  border-radius: 8px;
-  z-index: 0;
+  right: 0;
+  height: 0.5rem;
+  background: linear-gradient(180deg, #2d5a27 0%, #1e4d1a 100%);
+  z-index: 1;
+}
+
+.track::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 0.5rem;
+  background: linear-gradient(180deg, #2d5a27 0%, #1e4d1a 100%);
+  z-index: 1;
 }
 
 /* Lane */
@@ -255,11 +265,10 @@ body {
 
 .lane:first-child {
   border-top: 2px solid rgba(255, 255, 255, 0.3);
-  margin-top: 0.5rem;
 }
 
 .lane:last-child {
-  margin-bottom: 0.5rem;
+  /* Green grass area shows below due to track padding */
 }
 
 .lane--me {
@@ -313,6 +322,16 @@ body {
   left: 25%;
 }
 
+/* 75% distance marker - added as real element since pseudo-elements are used */
+.lane__marker-75 {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 75%;
+  width: 2px;
+  background: rgba(255, 255, 255, 0.2);
+}
+
 .lane__finish-line {
   position: absolute;
   right: 0;
@@ -323,7 +342,7 @@ body {
   border-radius: 2px;
 }
 
-/* Runner - Stick Figure */
+/* Runner - Sprite-based */
 .runner {
   position: absolute;
   top: 50%;
@@ -339,174 +358,71 @@ body {
 }
 
 .runner--clickable {
-  cursor: pointer;
+  cursor: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><circle cx="16" cy="16" r="14" fill="none" stroke="%23e94560" stroke-width="2"/><circle cx="16" cy="16" r="8" fill="none" stroke="%23e94560" stroke-width="2"/><circle cx="16" cy="16" r="2" fill="%23e94560"/><line x1="16" y1="0" x2="16" y2="6" stroke="%23e94560" stroke-width="2"/><line x1="16" y1="26" x2="16" y2="32" stroke="%23e94560" stroke-width="2"/><line x1="0" y1="16" x2="6" y2="16" stroke="%23e94560" stroke-width="2"/><line x1="26" y1="16" x2="32" y2="16" stroke="%23e94560" stroke-width="2"/></svg>') 16 16, crosshair;
 }
 
-.runner--clickable:hover .runner__figure {
+/* Large invisible hit area for easier clicking */
+.runner__hitarea {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  z-index: 10;
+}
+
+.runner--clickable:hover .runner__hitarea {
+  background: radial-gradient(circle, rgba(233, 69, 96, 0.2) 0%, transparent 70%);
+}
+
+.runner--clickable:hover .runner__sprite {
   transform: scale(1.15);
 }
 
-.runner__figure {
-  position: relative;
-  width: 24px;
-  height: 36px;
+/* Sprite-based runner */
+.runner__sprite {
+  width: 32px;
+  height: 32px;
+  background-image: url('/runner-sprite.svg');
+  background-size: 256px 32px;
+  background-position: 0 0;
+  background-repeat: no-repeat;
   transition: transform 0.1s;
 }
 
-/* Head */
-.runner__head {
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 10px;
-  height: 10px;
-  background: #f5d0c5;
-  border-radius: 50%;
-  border: 1px solid #d4a89a;
+/* Standing pose (frame 1) when not running */
+.runner__sprite {
+  background-position: 0 0;
 }
 
-.runner--me .runner__head {
-  background: var(--success-color);
-  border-color: #0099aa;
+/* 8-frame sprite animation when running */
+.runner--running .runner__sprite {
+  animation: runSprite 0.5s steps(8) infinite;
 }
 
-/* Body */
-.runner__body {
-  position: absolute;
-  top: 10px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 3px;
-  height: 14px;
-  background: #333;
-  border-radius: 2px;
+@keyframes runSprite {
+  from { background-position: 0 0; }
+  to { background-position: -256px 0; }
 }
 
-.runner--me .runner__body {
-  background: #0088aa;
+/* Player color tinting */
+.runner--me .runner__sprite {
+  filter: hue-rotate(180deg) saturate(1.5) brightness(1.2);
 }
 
-/* Legs */
-.runner__legs {
-  position: absolute;
-  top: 22px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 16px;
-  height: 14px;
+/* Impeded state - red tint */
+.runner--impeded .runner__sprite {
+  filter: hue-rotate(-30deg) saturate(2) brightness(1.1);
+  animation: runSprite 0.5s steps(8) infinite, shake 0.5s ease-in-out;
 }
 
-.runner__leg {
-  position: absolute;
-  width: 3px;
-  height: 14px;
-  background: #444;
-  border-radius: 2px;
-  transform-origin: top center;
-}
-
-.runner__leg--front {
-  left: 2px;
-}
-
-.runner__leg--back {
-  right: 2px;
-}
-
-/* Only animate legs when running */
-.runner--running .runner__leg--front {
-  animation: legFront 0.3s ease-in-out infinite;
-}
-
-.runner--running .runner__leg--back {
-  animation: legBack 0.3s ease-in-out infinite;
-}
-
-/* Arms */
-.runner__arms {
-  position: absolute;
-  top: 11px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 20px;
-  height: 10px;
-}
-
-.runner__arm {
-  position: absolute;
-  width: 3px;
-  height: 10px;
-  background: #f5d0c5;
-  border-radius: 2px;
-  transform-origin: top center;
-}
-
-.runner__arm--front {
-  left: 0;
-}
-
-.runner__arm--back {
-  right: 0;
-}
-
-/* Only animate arms when running */
-.runner--running .runner__arm--front {
-  animation: armFront 0.3s ease-in-out infinite;
-}
-
-.runner--running .runner__arm--back {
-  animation: armBack 0.3s ease-in-out infinite;
-}
-
-.runner--me .runner__arm {
-  background: var(--success-color);
-}
-
-/* Running animations */
-@keyframes legFront {
-  0%, 100% { transform: rotate(-30deg); }
-  50% { transform: rotate(30deg); }
-}
-
-@keyframes legBack {
-  0%, 100% { transform: rotate(30deg); }
-  50% { transform: rotate(-30deg); }
-}
-
-@keyframes armFront {
-  0%, 100% { transform: rotate(25deg); }
-  50% { transform: rotate(-25deg); }
-}
-
-@keyframes armBack {
-  0%, 100% { transform: rotate(-25deg); }
-  50% { transform: rotate(25deg); }
-}
-
-/* Stopped state - no animation */
-.runner--finished .runner__leg,
-.runner--finished .runner__arm {
+/* Finished state - gold tint, no animation */
+.runner--finished .runner__sprite {
+  filter: sepia(1) saturate(2) brightness(1.2) hue-rotate(-10deg);
   animation: none;
-  transform: rotate(0deg);
-}
-
-/* Impeded state */
-.runner--impeded .runner__figure {
-  animation: shake 0.5s ease-in-out;
-}
-
-.runner--impeded .runner__head,
-.runner--impeded .runner__body,
-.runner--impeded .runner__leg,
-.runner--impeded .runner__arm {
-  background: var(--accent-color);
-}
-
-/* Finished state */
-.runner--finished .runner__head {
-  background: var(--gold-color);
-  border-color: #cca300;
+  background-position: 0 0;
 }
 
 /* Runner label */

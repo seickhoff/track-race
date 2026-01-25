@@ -45,7 +45,7 @@ export function useWebSocket(): UseWebSocketReturn {
 
   useEffect(() => {
     let socket: WebSocket;
-    let reconnectTimeout: NodeJS.Timeout;
+    let reconnectTimeout: ReturnType<typeof setTimeout>;
 
     const connect = () => {
       socket = new WebSocket(WS_URL);

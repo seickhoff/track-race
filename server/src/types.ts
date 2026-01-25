@@ -35,10 +35,10 @@ export type ClientMessage =
 // Server -> Client messages
 export type ServerMessage =
   | { type: 'PLAYER_ASSIGNED'; playerId: string; lane: number; name: string }
-  | { type: 'LOBBY_UPDATE' } & GameStateData
+  | ({ type: 'LOBBY_UPDATE' } & GameStateData)
   | { type: 'COUNTDOWN_START'; countdown: number }
   | { type: 'GAME_START' }
-  | { type: 'STATE_UPDATE' } & GameStateData
+  | ({ type: 'STATE_UPDATE' } & GameStateData)
   | { type: 'IMPEDE_EFFECT'; targetLane: number; attackerLane: number }
   | { type: 'GAME_END'; rankings: RankingEntry[] }
   | { type: 'GAME_RESET'; reason: string }

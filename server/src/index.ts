@@ -1,9 +1,46 @@
 import { WebSocketServer, WebSocket } from 'ws';
+import { createServer } from 'http';
 import { GameState, CONFIG, Player } from './GameState.js';
 import { ClientMessage, ServerMessage } from './types.js';
 
 const PORT = Number(process.env.PORT) || 3001;
-const wss = new WebSocketServer({ port: PORT });
+const CLIENT_URL = process.env.CLIENT_URL || 'http://localhost:5173';
+
+const server = createServer((req, res) => {
+  // Handle CORS preflight
+  res.setHeader('Access-Control-Allow-Origin', CLIENT_URL);
+  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+  if (req.method === 'OPTIONS') {
+    res.writeHead(204);
+    res.end();
+    return;
+  }
+
+  if (req.url === '/health') {
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ status: 'ok', players: game.players.size }));
+    return;
+  }
+
+  res.writeHead(404);
+  res.end();
+});
+
+const wss = new WebSocketServer({
+  server,
+  verifyClient: (info, callback) => {
+    const origin = info.origin || info.req.headers.origin;
+    // Allow connections from CLIENT_URL or localhost for development
+    const allowed =
+      origin === CLIENT_URL ||
+      origin?.startsWith('http://localhost') ||
+      origin?.startsWith('http://127.0.0.1') ||
+      false;
+    callback(allowed);
+  },
+});
 const game = new GameState();
 const clients = new Map<WebSocket, string>();
 
@@ -176,4 +213,7 @@ wss.on('connection', (ws: WebSocket) => {
   });
 });
 
-console.log(`WebSocket server running on port ${PORT}`);
+server.listen(PORT, () => {
+  console.log(`WebSocket server running on port ${PORT}`);
+  console.log(`Accepting connections from: ${CLIENT_URL}`);
+});

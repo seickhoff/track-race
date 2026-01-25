@@ -203,7 +203,8 @@ export class GameState {
         player.currentSpeed = player.baseSpeed * player.fatigueFactor;
       } else {
         // When impeded, apply both impede penalty and fatigue
-        player.currentSpeed = player.baseSpeed * (1 - CONFIG.IMPEDE_SLOW_PERCENT) * player.fatigueFactor;
+        player.currentSpeed =
+          player.baseSpeed * (1 - CONFIG.IMPEDE_SLOW_PERCENT) * player.fatigueFactor;
       }
 
       player.position += player.currentSpeed * deltaTime;
@@ -229,7 +230,10 @@ export class GameState {
       players,
       raceTime: this.startTime ? Date.now() - this.startTime : 0,
       countdown: this.countdownStart
-        ? Math.max(0, CONFIG.COUNTDOWN_SECONDS - Math.floor((Date.now() - this.countdownStart) / 1000))
+        ? Math.max(
+            0,
+            CONFIG.COUNTDOWN_SECONDS - Math.floor((Date.now() - this.countdownStart) / 1000)
+          )
         : null,
     };
   }
